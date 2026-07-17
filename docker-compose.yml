@@ -1,0 +1,29 @@
+# SurakshaMCP — runs the NitroStack MCP server + the Python inference service together.
+services:
+  inference:
+    build: ./inference-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PPE_WEIGHTS=/models/ppe_best.pt          # fine-tuned YOLOv8 weights (mount or bake in)
+      - LANGID_WEIGHTS=/models/langid.pt
+      - TTS_BACKEND=indic_tts                     # indic_tts | gtts (demo fallback)
+    volumes:
+      - ./models:/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  mcp-server:
+    build: ./mcp-server
+    ports:
+      - "3000:3000"
+    environment:
+      - INFERENCE_URL=http://inference:8000
+      - MCP_API_KEY=${MCP_API_KEY:-dev-key-change-me}
+      - NODE_ENV=production
+    depends_on:
+      inference:
+        condition: service_healthy

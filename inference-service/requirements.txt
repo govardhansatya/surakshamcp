@@ -1,0 +1,27 @@
+# FastAPI inference service
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+python-multipart==0.0.9
+
+# Vision (transfer-learning model #1) — YOLOv8. AGPL-3.0.
+# For closed-source inference, export to ONNX and use onnxruntime instead.
+ultralytics==8.3.0
+onnxruntime==1.19.2          # permissive inference path (optional)
+
+# Audio language-ID (transfer-learning model #2)
+librosa==0.10.2
+soundfile==0.12.1
+numpy==1.26.4
+torch==2.4.1
+torchaudio==2.4.1
+scikit-learn==1.5.2
+
+# Text-to-speech (Indian languages)
+# Primary: AI4Bharat Indic-TTS (MIT) — install from their repo/model hub in production.
+# Demo fallback (fast to wire): gTTS (unofficial Google Translate TTS).
+gTTS==2.5.3
+
+# misc
+requests==2.32.3
+pillow==10.4.0
