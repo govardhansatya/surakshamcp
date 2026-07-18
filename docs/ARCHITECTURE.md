@@ -13,20 +13,33 @@ engineering quick-reference.
 | `detect_proximity_hazards` | safety | real-time struck-by/run-over (person near machinery/vehicle) | no |
 | `identify_worker_language` | language | spoken-language ID from a ~5s clip | no |
 | `generate_voice_alert` | language | spoken alert (Indic-TTS) in a chosen language | no |
-| `generate_toolbox_talk` | language | multilingual safety briefing / site induction | no |
+| `generate_toolbox_talk` | language | multilingual safety briefing / site induction (logged as ESG training) | no |
 | `generate_safety_report` | compliance | regulation-cited report + incident logging | no |
+| `generate_esg_report` | esg | BRSR Principle-3 (SEBI ESG) safety disclosure from the incident DB | no |
+| `send_whatsapp_alert` | notify | WhatsApp text + voice-note alert via Twilio (dry-run without creds; rate-limited) | no |
 | `run_site_safety_audit` | workflows | **hero** end-to-end audit | **required (long-running Task)** |
 | `health_check` | infra | server + backend readiness | no |
 
 **Resources**
 - `suraksha://regulations/india` — BOCW / Factories Act / OSHWC / IS clauses by violation type
 - `suraksha://incidents/recent` — recent detected incidents
+- `suraksha://esg/brsr-summary` — rolling 12-month BRSR Principle-3 safety summary (auto-computed)
+- `suraksha://esg/methodology` — how every ESG metric is computed (LTIFR formula, leading vs lagging)
 
 **Prompts**
 - `safety_investigation_playbook` — guided multi-tool investigation
 - `compliance_report_brief` — management-ready report template
+- `esg_disclosure_brief` — drafts the BRSR Principle-3 section with honest data-gap flags
 
-→ Implements **all three** MCP primitives (rule R10 needs only two) + MCP Tasks.
+→ Implements **all three** MCP primitives (rule R10 needs only two) + MCP Tasks + `@RateLimit`.
+
+## Persistence
+
+Incidents, toolbox-talk trainings, and delivered alerts land in a **SQLite DB**
+(`better-sqlite3`, WAL) at `SURAKSHA_DB_PATH` (default `./data/suraksha.db`; volume-mounted
+in docker-compose). This is what makes month-over-month ESG trends real — data survives
+restarts. Swap-in path to Postgres/Neon: the store surface in
+`mcp-server/src/common/incident.store.ts` is the only file to change.
 
 ## Data flow (hero audit)
 

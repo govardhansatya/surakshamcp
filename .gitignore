@@ -12,12 +12,24 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Models & data (large — do not commit; download/train separately)
-models/
+# Local swap-in weights dir for docker-compose volume mount only (not the deployed copy —
+# that lives in inference-service/models/, which IS committed, see below).
+/models/
 *.pt
 *.onnx
 datasets/
 runs/
+
+# Deployed model IS committed (small enough for git, and Docker needs it baked into the
+# image for hosts that don't support docker-compose volume mounts).
+!/inference-service/models/
+!/inference-service/models/*.tflite
+
+# SQLite incident DB (runtime state)
+data/
+*.db
+*.db-wal
+*.db-shm
 
 # OS / editor
 .DS_Store

@@ -52,6 +52,10 @@ export class SafetyService {
     const out: Violation[] = [];
     for (const p of persons) {
       for (const m of movers) {
+        // Whole-image classifier mode stands every class in for the same full-frame box, which
+        // would otherwise always read as a 0-gap overlap here. Identical boxes carry no real
+        // localisation signal, so skip them rather than report a spurious critical hazard.
+        if (this.sameBbox(p.bbox, m.bbox)) continue;
         const gap = this.boxGap(p.bbox, m.bbox);
         if (gap < 0.06 * diag) {
           out.push({
@@ -77,6 +81,13 @@ export class SafetyService {
     const dx = Math.max(0, Math.max(ax - (bx + bw), bx - (ax + aw)));
     const dy = Math.max(0, Math.max(ay - (by + bh), by - (ay + ah)));
     return Math.hypot(dx, dy);
+  }
+
+  private sameBbox(
+    a: [number, number, number, number],
+    b: [number, number, number, number],
+  ): boolean {
+    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
   }
 
   private humanMessage(cls: string): string {

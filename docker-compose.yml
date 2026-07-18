@@ -5,9 +5,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - PPE_WEIGHTS=/models/ppe_best.pt          # fine-tuned YOLOv8 weights (mount or bake in)
+      - PPE_WEIGHTS=/models/ppe_classifier.tflite  # trained multi-label classifier (see ppe_detector.py)
       - LANGID_WEIGHTS=/models/langid.pt
-      - TTS_BACKEND=indic_tts                     # indic_tts | gtts (demo fallback)
+      - TTS_BACKEND=gtts                          # gtts (implemented) | indic_tts (stub — see tts_engine.py)
     volumes:
       - ./models:/models
     healthcheck:
@@ -24,6 +24,13 @@ services:
       - INFERENCE_URL=http://inference:8000
       - MCP_API_KEY=${MCP_API_KEY:-dev-key-change-me}
       - NODE_ENV=production
+      - SURAKSHA_DB_PATH=/app/data/suraksha.db
+      # WhatsApp alert channel (optional — tool falls back to dry-run without these)
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID:-}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN:-}
+      - TWILIO_WHATSAPP_FROM=${TWILIO_WHATSAPP_FROM:-}
+    volumes:
+      - ./data:/app/data          # persists the SQLite incident/training/alert DB
     depends_on:
       inference:
         condition: service_healthy

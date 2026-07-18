@@ -4,6 +4,8 @@ import { SafetyModule } from './modules/safety/safety.module.js';
 import { LanguageModule } from './modules/language/language.module.js';
 import { ComplianceModule } from './modules/compliance/compliance.module.js';
 import { WorkflowsModule } from './modules/workflows/workflows.module.js';
+import { EsgModule } from './modules/esg/esg.module.js';
+import { NotifyModule } from './modules/notify/notify.module.js';
 import { InfraModule } from './modules/infra/infra.module.js';
 
 @McpApp({
@@ -24,6 +26,8 @@ import { InfraModule } from './modules/infra/infra.module.js';
     LanguageModule,     // identify_worker_language, generate_voice_alert
     ComplianceModule,   // generate_safety_report + regulation Resources + Prompts
     WorkflowsModule,    // run_site_safety_audit (long-running MCP Task) — the hero
+    EsgModule,          // generate_esg_report (BRSR Principle-3) + summary/methodology Resources
+    NotifyModule,       // send_whatsapp_alert (Twilio, dry-run without creds)
   ],
 })
 export class AppModule {}

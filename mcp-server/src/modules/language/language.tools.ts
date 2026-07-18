@@ -2,6 +2,7 @@
 // TOOLS: identify_worker_language, generate_voice_alert
 import { ToolDecorator as Tool, z, ExecutionContext, Injectable } from '@nitrostack/core';
 import { InferenceClient } from '../../common/inference.client.js';
+import { IncidentStore } from '../../common/incident.store.js';
 import { LanguageService, LANGUAGES } from './language.service.js';
 
 @Injectable({ deps: [InferenceClient, LanguageService] })
@@ -83,16 +84,20 @@ export class LanguageTools {
     description:
       'Generate a short SPOKEN safety briefing (toolbox talk / site induction) in a chosen Indian ' +
       'language for a topic (e.g. "working at height", "excavation near vehicles"). Addresses the ' +
-      'real training gap for multilingual migrant crews — a stronger use of voice than narrating signs.',
+      'real training gap for multilingual migrant crews — a stronger use of voice than narrating signs. ' +
+      'Each delivered talk is logged as a training session, feeding the BRSR EI-8 training-coverage ' +
+      'metric in generate_esg_report.',
     inputSchema: z.object({
       language: z.enum(Object.keys(LANGUAGES) as [string, ...string[]]),
       topic: z.string().describe('Safety topic to brief on'),
       points: z.array(z.string()).optional().describe('Optional key points to include'),
+      siteId: z.string().optional().describe('Site the talk is delivered at (for ESG training records)'),
+      workersAttended: z.number().int().min(0).optional().describe('Headcount briefed (for ESG training coverage)'),
     }),
     taskSupport: 'forbidden',
   })
   async generateToolboxTalk(
-    input: { language: string; topic: string; points?: string[] },
+    input: { language: string; topic: string; points?: string[]; siteId?: string; workersAttended?: number },
     ctx: ExecutionContext,
   ) {
     const points = input.points ?? [
@@ -103,6 +108,14 @@ export class LanguageTools {
     const script = `Today's safety briefing: ${input.topic}. ` + points.join(' ');
     // Production: translate `script` to the target language (e.g. AI4Bharat IndicTrans2) before TTS.
     const tts = await this.inference.synthesizeSpeech({ text: script, language: input.language });
+    IncidentStore.addTraining({
+      siteId: input.siteId,
+      topic: input.topic,
+      language: input.language,
+      workersAttended: input.workersAttended,
+      audioUrl: tts.audioUrl,
+      durationSec: tts.durationSec,
+    });
     return {
       language: input.language,
       languageName: this.lang.name(input.language),
@@ -110,6 +123,7 @@ export class LanguageTools {
       script,
       audioUrl: tts.audioUrl,
       durationSec: tts.durationSec,
+      loggedAsTraining: true, // counted toward BRSR EI-8 training coverage in generate_esg_report
     };
   }
 }

@@ -1,6 +1,6 @@
 // TOOL: generate_safety_report — aggregates violations into a regulation-cited summary.
 import { ToolDecorator as Tool, z, ExecutionContext, Injectable } from '@nitrostack/core';
-import { IncidentStore } from './compliance.resources.js';
+import { IncidentStore } from '../../common/incident.store.js';
 
 const REG_CITATION: Record<string, string> = {
   'NO-Hardhat': 'BOCW Central Rules 1998 Rule 36; Factories Act 1948 s.7A; IS 2925.',
@@ -34,7 +34,7 @@ export class ComplianceTools {
     const byType: Record<string, number> = {};
     for (const v of input.violations) {
       byType[v.type] = (byType[v.type] ?? 0) + 1;
-      IncidentStore.add({ siteId: input.siteId, ...v, citation: REG_CITATION[v.type] });
+      IncidentStore.add({ siteId: input.siteId, ...v, citation: REG_CITATION[v.type], source: 'generate_safety_report' });
     }
     const critical = input.violations.filter((v) => v.severity === 'critical').length;
     const complianceRate = input.workersObserved
