@@ -11,6 +11,13 @@
 
 Construction is one of the deadliest industries. On Indian sites the workforce is largely **low-literacy and multilingual/migrant**, so English safety signage and dashboards don't reach the person in danger. Enterprise camera-safety systems exist (viAct, Intenseye, Tentosoft…) but they are **closed dashboards**, **English-first**, and **priced for large firms** — leaving the huge **MSME / small-contractor** long tail unserved.
 
+### The scale of the problem
+The construcction sector is also the India's second-most-hazardous sector, averaging **~38 fatal accidents a day** and accounting for **~24% of all workplace deaths** nationally (NIT Surat / IIT Delhi study, cited in *British Safety Council India*). **60% of these deaths are falls from height** and **25% are structural collapses** — exactly the hazard categories a phone-photo PPE/hazard detector is built to catch.
+
+Official numbers likely *undercount* the true toll: nearly **30% of construction labourers are unregistered**, making them largely invisible to formal inspection regimes.
+
+Meanwhile, SEBI's **BRSR framework** — mandatory for India's top 1000 listed companies, with value-chain ESG disclosure increasingly expected on a comply-or-explain basis — creates a real commercial incentive: **MSME contractors who can produce a BRSR-aligned safety annexe win bids the others can't.**
+
 ## What makes it different (3 wedges no incumbent owns)
 
 1. **MCP-native & agent-composable** — safety intelligence exposed as MCP Tools/Resources/Prompts + a long-running Task, orchestrated by *any* host (Claude, ChatGPT, Copilot Studio, a WhatsApp bot). Not another locked dashboard.
