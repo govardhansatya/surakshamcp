@@ -3,7 +3,7 @@
 > **The first multilingual, voice-first Construction-Safety _MCP server_.**
 > A composable safety-intelligence layer, built on **NitroStack**, that any AI agent or MCP host can orchestrate — it detects PPE / hazard violations from a site photo, identifies each worker's spoken language, and delivers spoken safety alerts and regulation-cited compliance reports in **10 Indian languages**. Purpose-built for India's MSME construction sites and low-literacy workforce.
 
-**Amrita University MCP Hackathon 2026 · Track: Open Innovation (Occupational & Construction Safety)**
+**Amrita University MCP Hackathon 2026 · Track: MANUFACTURING & INDUSTRY 4.0(Occupational & Construction Safety)**
 
 ---
 
