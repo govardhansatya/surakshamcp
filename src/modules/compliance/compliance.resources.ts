@@ -2,6 +2,7 @@
 // NOTE: verify the exact decorator import name + return shape against
 // https://docs.nitrostack.ai (Resources guide). Pattern mirrors the Tool decorator.
 import { ResourceDecorator as Resource, Injectable } from '@nitrostack/core';
+import { IncidentStore } from '../../common/incident.store.js';
 
 // Minimal, citable Indian construction-safety regulation map (extend from official texts).
 const REGULATIONS = {
@@ -32,7 +33,8 @@ export class ComplianceResources {
     return { contents: REGULATIONS, source: 'BOCW Act 1996 & Central Rules 1998; Factories Act 1948; OSHWC Code 2020; BIS standards.' };
   }
 
-  // Incident log resource — in production, backed by a DB. Here: in-memory demo store.
+  // Incident log resource — backed by the persistent SQLite store (survives restarts,
+  // powers the ESG/BRSR trend metrics).
   @Resource({
     uri: 'suraksha://incidents/recent',
     name: 'recent_incidents',
@@ -44,9 +46,5 @@ export class ComplianceResources {
   }
 }
 
-// Tiny shared in-memory store (swap for SQLite/Postgres in production).
-export const IncidentStore = {
-  _rows: [] as Array<Record<string, unknown>>,
-  add(row: Record<string, unknown>) { this._rows.unshift({ ...row, ts: new Date().toISOString() }); },
-  all() { return this._rows.slice(0, 200); },
-};
+// Re-exported so existing importers keep working after the SQLite migration.
+export { IncidentStore } from '../../common/incident.store.js';

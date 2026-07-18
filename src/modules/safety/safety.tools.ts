@@ -15,10 +15,12 @@ export class SafetyTools {
     name: 'detect_ppe_violations',
     description:
       'Analyse a construction-site image (photo or CCTV frame) and detect PPE / hazard ' +
-      'violations using a YOLOv8 model fine-tuned on the Roboflow Construction Site Safety ' +
-      'dataset (classes: Hardhat, Mask, Safety Vest and their NO- variants, Person, Safety ' +
-      'Cone, machinery, vehicle). Returns structured violations with severity so an agent ' +
-      'can decide whether to alert, escalate, or log.',
+      'conditions using a trained multi-label classifier (10 classes: Hardhat, Mask, Safety ' +
+      'Vest and their NO- variants, Person, Safety Cone, machinery, vehicle). Reports which ' +
+      'conditions are present in the whole frame — it does NOT localise individual people ' +
+      '(no per-worker bounding boxes), so treat results as frame-level, not per-person. ' +
+      'Returns structured violations with severity so an agent can decide whether to alert, ' +
+      'escalate, or log.',
     inputSchema: z.object({
       imageUrl: z.string().url().optional().describe('Public URL of the site image.'),
       imageBase64: z.string().optional().describe('Base64 image bytes (alternative to imageUrl).'),
@@ -59,7 +61,9 @@ export class SafetyTools {
       'Detect real-time struck-by / run-over hazards — a worker dangerously close to moving ' +
       'machinery or a vehicle — from a site image. This is the DYNAMIC-hazard case where an ' +
       'immediate spoken warning in the worker\'s language can prevent an incident (cf. EMESRT L7 ' +
-      'audible-alert collision-avoidance). Vision-based and low-cost; complements UWB tag systems.',
+      'audible-alert collision-avoidance). Vision-based and low-cost; complements UWB tag systems. ' +
+      'Requires an object-detection backend with real per-object boxes — with the current ' +
+      'whole-image classifier model this will not fire (no localisation available).',
     inputSchema: z.object({
       imageUrl: z.string().url().optional(),
       imageBase64: z.string().optional(),
